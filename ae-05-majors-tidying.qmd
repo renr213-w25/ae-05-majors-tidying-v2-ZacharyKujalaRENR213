@@ -1,5 +1,6 @@
 ---
 title: "AE 05: Tidying StatSci Majors"
+author: "Zachary Kujala"
 ---
 
 ## Goal
@@ -34,26 +35,33 @@ statsci
 ```{r}
 #| label: pivot
 
-# add your code here
-  
-  
+pivot_longer(statsci,
+             cols = "2011":"2023",
+             names_to = "year",
+             values_to = "n"
+             )
 ```
 
 -   **Question:** What is the type of the `year` variable? Why? What should it be?
 
-*Add your response here.*
+*The `year` variable is a character type since the values were originally column names in the unpivoted table. They should be changed to numbers.*
 
 -   **Demo:** Start over with pivoting, and this time also make sure `year` is a numerical variable in the resulting data frame.
 
 ```{r}
 #| label: pivot-with-transform
 
-# add your code here
+pivot_longer(statsci,
+             cols = "2011":"2023",
+             names_to = "year",
+             names_transform = list(year = as.integer),
+             values_to = "n"
+             )
 ```
 
 -   **Question:** What does an `NA` mean in this context? *Hint:* The data come from the university registrar, and they have records on every single graduates, there shouldn't be anything "unknown" to them about who graduated when.
 
-*Add your response here.*
+*`NA` means that for that year no student graduated with that degree.*
 
 -   **Demo:** Add on to your pipeline that you started with pivoting and convert `NA`s in `n` to `0`s.
 
@@ -61,8 +69,19 @@ statsci
 
 #| label: convert-na
 
-# add your code here
+statsci |> 
+pivot_longer(cols = "2011":"2023",
+             names_to = "year",
+             names_transform = list(year = as.integer),
+             values_to = "n"
+             ) |> replace_na(replace = list("n" = 0)) 
 ```
+
+::: callout-important
+`replace_na(replace = list("n" = 0))` sourced from:
+
+Replace Missing Value NA with Specified Values. (n.d.). DataBrewer. <https://www.databrewer.co/R/data-wrangling/tidyr/replace-NA-with-specified-values>
+:::
 
 -   **Demo:** In our plot the degree types are BS, BS2, AB, and AB2. This information is in our dataset, in the `degree` column, but this column also has additional characters we don't need. Create a new column called `degree_type` with levels BS, BS2, AB, and AB2 (in this order) based on `degree`. Do this by adding on to your pipeline from earlier.
 
@@ -71,8 +90,21 @@ statsci
 
 # add your code here
   
-  
+statsci |> 
+pivot_longer(cols = "2011":"2023",
+             names_to = "year",
+             names_transform = list(year = as.integer),
+             values_to = "n"
+             ) |> replace_na(replace = list("n" = 0)) |>
+  mutate(degree_type = str_replace_all(
+    degree, "Statistical Science \\(|\\)", ""))
 ```
+
+::: callout-important
+`mutate(degree_type = str_replace_all('degree, "Statistical Science \\(|\\)", ""))`sourced from:
+
+FJCC. (2020, June 8). *Removing Asterisk and Brackets from a column.* Posit Community. <https://forum.posit.co/t/removing-asterisk-and-brackets-from-a-column/69095/2>
+:::
 
 -   **Your turn:** Now we start making our plot, but let's not get too fancy right away. Create the following plot, which will serve as the "first draft" on the way to our [Goal]. Do this by adding on to your pipeline from earlier.
 
