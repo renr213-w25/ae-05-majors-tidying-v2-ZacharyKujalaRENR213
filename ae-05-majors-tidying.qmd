@@ -18,6 +18,7 @@ The data come from Duke's Office of the University Registrar. The data were down
 #| message: false
 
 library(tidyverse)
+library(scales)
 
 statsci <- read_csv("data/statsci.csv")
 ```
@@ -113,19 +114,51 @@ FJCC. (2020, June 8). *Removing Asterisk and Brackets from a column.* Posit Comm
 ```{r}
 #| label: plot-draft
 
-# add your code here.
+statsci_longer <- statsci |> 
+pivot_longer(cols = "2011":"2023",
+             names_to = "year",
+             names_transform = list(year = as.integer),
+             values_to = "n"
+             ) |> replace_na(replace = list("n" = 0)) |>
+  mutate(degree_type = str_replace_all(
+    degree, "Statistical Science \\(|\\)", ""))
+
+ggplot(statsci_longer, aes(x = year, y = n, color = degree_type)) +
+  geom_line() +
+  geom_point() +
+  scale_color_discrete(breaks = c('BS', 'BS2', 'AB', 'AB2'))
 
 ```
 
+::: callout-important
+`scale_color_discrete(breaks = c())`sourced from:
+
+Bobbit, Zach. (2021, October 28). *How to Change Order of Items in ggplot2 Legend*. Statology. <https://www.statology.org/ggplot-legend-order/>
+:::
+
 -   **Your turn:** What aspects of the plot need to be updated to go from the draft you created above to the [Goal] plot at the beginning of this application exercise.
 
-*Add your response here.*
+*Adding axis titles, adding a title, moving the legend, changing the theme of the plot, changing the x-axis to show every second year, adding a source for the data.*
 
 -   **Demo:** Update x-axis scale such that the years displayed go from 2011 to 2023 in increments of 2 years. Do this by adding on to your pipeline from earlier.
 
 ```{r}
 #| label: plot-improve-1
-# add your code here
+
+statsci_longer <- statsci |> 
+pivot_longer(cols = "2011":"2023",
+             names_to = "year",
+             names_transform = list(year = as.integer),
+             values_to = "n"
+             ) |> replace_na(replace = list("n" = 0)) |>
+  mutate(degree_type = str_replace_all(
+    degree, "Statistical Science \\(|\\)", ""))
+
+ggplot(statsci_longer, aes(x = year, y = n, color = degree_type)) +
+  geom_line() +
+  geom_point() +
+  scale_color_discrete(breaks = c('BS', 'BS2', 'AB', 'AB2')) +
+  scale_x_continuous(breaks = c(2011, 2013, 2015, 2017, 2019, 2021, 2023))
 
 ```
 
@@ -141,7 +174,23 @@ FJCC. (2020, June 8). *Removing Asterisk and Brackets from a column.* Posit Comm
 ```{r}
 #| label: plot-improve-2
 
-# add your code here
+statsci_longer <- statsci |> 
+pivot_longer(cols = "2011":"2023",
+             names_to = "year",
+             names_transform = list(year = as.integer),
+             values_to = "n"
+             ) |> replace_na(replace = list("n" = 0)) |>
+  mutate(degree_type = str_replace_all(
+    degree, "Statistical Science \\(|\\)", ""))
+
+ggplot(statsci_longer, aes(x = year, y = n)) +
+  geom_line(aes(color = degree_type)) +
+  geom_point(aes(color = degree_type)) +
+  scale_color_discrete(
+    breaks = c('BS', 'BS2', 'AB', 'AB2'), 
+    type = c("lightgoldenrod4","lightgoldenrod3","cadetblue4","cadetblue3")) +
+  scale_x_continuous(breaks = c(2011, 2013, 2015, 2017, 2019, 2021, 2023))
+
 ```
 
 -   **Your turn:** Update the plot labels (`title`, `subtitle`, `x`, `y`, and `caption`) and use `theme_minimal()`. Once again, do this by adding on to your pipeline from earlier.
