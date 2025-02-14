@@ -193,12 +193,42 @@ ggplot(statsci_longer, aes(x = year, y = n)) +
 
 ```
 
+::: callout-important
+`scale_color_discrete(type = c())` sourced from:
+
+benson23. (2023, June 1). *How to change colors when using scale_fill_discrete in R?* Stack Overflow. <https://stackoverflow.com/a/76381528>
+:::
+
 -   **Your turn:** Update the plot labels (`title`, `subtitle`, `x`, `y`, and `caption`) and use `theme_minimal()`. Once again, do this by adding on to your pipeline from earlier.
 
 ```{r}
 #| label: plot-improve-3
 
-# add your code here
+statsci_longer <- statsci |> 
+pivot_longer(cols = "2011":"2023",
+             names_to = "year",
+             names_transform = list(year = as.integer),
+             values_to = "n"
+             ) |> replace_na(replace = list("n" = 0)) |>
+  mutate(degree_type = str_replace_all(
+    degree, "Statistical Science \\(|\\)", ""))
+
+ggplot(statsci_longer, aes(x = year, y = n)) +
+  geom_line(aes(color = degree_type)) +
+  geom_point(aes(color = degree_type)) +
+  scale_color_discrete(
+    breaks = c('BS', 'BS2', 'AB', 'AB2'), 
+    type = c("lightgoldenrod4","lightgoldenrod3","cadetblue4","cadetblue3")) +
+  scale_x_continuous(breaks = c(2011, 2013, 2015, 2017, 2019, 2021, 2023)) +
+  labs(
+    title = "Statistical Science majors over the years",
+    subtitle = "Academic years 2011 - 2023",
+    x = "Graduation year",
+    y = "Number of majors graduating",
+    caption = "Source: Office of the University Registrar
+    https://registrar.duke.edu/registration/enrollment-statistics",
+    color = "Degree type"
+  ) + theme_minimal()
 ```
 
 -   **Demo:** Finally, adding to your pipeline you've developed so far, move the legend into the plot, make its background white, and its border gray. Set `fig-width: 7` and `fig-height: 5` for your plot in the chunk options.
@@ -206,5 +236,32 @@ ggplot(statsci_longer, aes(x = year, y = n)) +
 ```{r}
 #| label: plot-improve-4
 
-# add your code here
+statsci_longer <- statsci |> 
+pivot_longer(cols = "2011":"2023",
+             names_to = "year",
+             names_transform = list(year = as.integer),
+             values_to = "n"
+             ) |> replace_na(replace = list("n" = 0)) |>
+  mutate(degree_type = str_replace_all(
+    degree, "Statistical Science \\(|\\)", ""))
+
+ggplot(statsci_longer, aes(x = year, y = n)) +
+  geom_line(aes(color = degree_type)) +
+  geom_point(aes(color = degree_type)) +
+  scale_color_discrete(
+    breaks = c('BS', 'BS2', 'AB', 'AB2'), 
+    type = c("lightgoldenrod4","lightgoldenrod3","cadetblue4","cadetblue3")) +
+  scale_x_continuous(breaks = c(2011, 2013, 2015, 2017, 2019, 2021, 2023)) +
+  labs(
+    title = "Statistical Science majors over the years",
+    subtitle = "Academic years 2011 - 2023",
+    x = "Graduation year",
+    y = "Number of majors graduating",
+    caption = "Source: Office of the University Registrar
+    https://registrar.duke.edu/registration/enrollment-statistics",
+    color = "Degree type"
+  ) + theme_minimal() +
+  theme(legend.position = c(0.2, 0.8),
+        legend.background = element_rect(fill = "white", size=0.5, linetype="solid", 
+                                  colour ="grey"))
 ```
