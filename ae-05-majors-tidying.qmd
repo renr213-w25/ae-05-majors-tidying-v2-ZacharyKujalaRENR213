@@ -89,8 +89,6 @@ Replace Missing Value NA with Specified Values. (n.d.). DataBrewer. <https://www
 ```{r}
 #| label: degree-type
 
-# add your code here
-  
 statsci |> 
 pivot_longer(cols = "2011":"2023",
              names_to = "year",
@@ -98,13 +96,18 @@ pivot_longer(cols = "2011":"2023",
              values_to = "n"
              ) |> replace_na(replace = list("n" = 0)) |>
   mutate(degree_type = str_replace_all(
-    degree, "Statistical Science \\(|\\)", ""))
+    degree, "Statistical Science \\(|\\)", "")) |>
+  arrange(factor(degree_type, levels = c("BS", "BS2", "AB", "AB2")))
 ```
 
 ::: callout-important
 `mutate(degree_type = str_replace_all('degree, "Statistical Science \\(|\\)", ""))`sourced from:
 
 FJCC. (2020, June 8). *Removing Asterisk and Brackets from a column.* Posit Community. <https://forum.posit.co/t/removing-asterisk-and-brackets-from-a-column/69095/2>
+
+`arrange(factor(levels = c()))` sourced from:
+
+Jim. (2022, June 2). *Arrange the rows in a specific sequence in R.* R Bloggers. <https://www.r-bloggers.com/2022/06/arrange-the-rows-in-a-specific-sequence-in-r/>
 :::
 
 -   **Your turn:** Now we start making our plot, but let's not get too fancy right away. Create the following plot, which will serve as the "first draft" on the way to our [Goal]. Do this by adding on to your pipeline from earlier.
@@ -121,11 +124,12 @@ pivot_longer(cols = "2011":"2023",
              values_to = "n"
              ) |> replace_na(replace = list("n" = 0)) |>
   mutate(degree_type = str_replace_all(
-    degree, "Statistical Science \\(|\\)", ""))
+    degree, "Statistical Science \\(|\\)", "")) |>
+  arrange(factor(degree_type, levels = c("BS", "BS2", "AB", "AB2")))
 
-ggplot(statsci_longer, aes(x = year, y = n, color = degree_type)) +
-  geom_line() +
-  geom_point() +
+ggplot(statsci_longer, aes(x = year, y = n)) +
+  geom_line(aes(color = degree_type)) +
+  geom_point(aes(color = degree_type)) +
   scale_color_discrete(breaks = c('BS', 'BS2', 'AB', 'AB2'))
 
 ```
@@ -152,11 +156,12 @@ pivot_longer(cols = "2011":"2023",
              values_to = "n"
              ) |> replace_na(replace = list("n" = 0)) |>
   mutate(degree_type = str_replace_all(
-    degree, "Statistical Science \\(|\\)", ""))
+    degree, "Statistical Science \\(|\\)", "")) |>
+  arrange(factor(degree_type, levels = c("BS", "BS2", "AB", "AB2")))
 
-ggplot(statsci_longer, aes(x = year, y = n, color = degree_type)) +
-  geom_line() +
-  geom_point() +
+ggplot(statsci_longer, aes(x = year, y = n)) +
+  geom_line(aes(color = degree_type)) +
+  geom_point(aes(color = degree_type)) +
   scale_color_discrete(breaks = c('BS', 'BS2', 'AB', 'AB2')) +
   scale_x_continuous(breaks = c(2011, 2013, 2015, 2017, 2019, 2021, 2023))
 
@@ -181,7 +186,8 @@ pivot_longer(cols = "2011":"2023",
              values_to = "n"
              ) |> replace_na(replace = list("n" = 0)) |>
   mutate(degree_type = str_replace_all(
-    degree, "Statistical Science \\(|\\)", ""))
+    degree, "Statistical Science \\(|\\)", "")) |>
+  arrange(factor(degree_type, levels = c("BS", "BS2", "AB", "AB2")))
 
 ggplot(statsci_longer, aes(x = year, y = n)) +
   geom_line(aes(color = degree_type)) +
@@ -211,7 +217,8 @@ pivot_longer(cols = "2011":"2023",
              values_to = "n"
              ) |> replace_na(replace = list("n" = 0)) |>
   mutate(degree_type = str_replace_all(
-    degree, "Statistical Science \\(|\\)", ""))
+    degree, "Statistical Science \\(|\\)", "")) |>
+  arrange(factor(degree_type, levels = c("BS", "BS2", "AB", "AB2")))
 
 ggplot(statsci_longer, aes(x = year, y = n)) +
   geom_line(aes(color = degree_type)) +
@@ -235,6 +242,9 @@ ggplot(statsci_longer, aes(x = year, y = n)) +
 
 ```{r}
 #| label: plot-improve-4
+#| warning: false
+#| fig-width: 7
+#| fig-height: 5
 
 statsci_longer <- statsci |> 
 pivot_longer(cols = "2011":"2023",
@@ -243,7 +253,8 @@ pivot_longer(cols = "2011":"2023",
              values_to = "n"
              ) |> replace_na(replace = list("n" = 0)) |>
   mutate(degree_type = str_replace_all(
-    degree, "Statistical Science \\(|\\)", ""))
+    degree, "Statistical Science \\(|\\)", "")) |>
+  arrange(factor(degree_type, levels = c("BS", "BS2", "AB", "AB2")))
 
 ggplot(statsci_longer, aes(x = year, y = n)) +
   geom_line(aes(color = degree_type)) +
@@ -262,6 +273,14 @@ ggplot(statsci_longer, aes(x = year, y = n)) +
     color = "Degree type"
   ) + theme_minimal() +
   theme(legend.position = c(0.2, 0.8),
-        legend.background = element_rect(fill = "white", size=0.5, linetype="solid", 
-                                  colour ="grey"))
+        legend.background = element_rect(fill = "white", 
+                                         linewidth=0.5, 
+                                         linetype="solid", 
+                                         colour ="grey"))
 ```
+
+::: callout-important
+`theme(legend.position = c())` and `theme(legend.background = element_rect())` sourced from:
+
+ggplot2 legend : Easy steps to change the position and the appearance of a graph legend in R software. (n.d). STHDA. <https://www.sthda.com/english/wiki/ggplot2-legend-easy-steps-to-change-the-position-and-the-appearance-of-a-graph-legend-in-r-software>
+:::
